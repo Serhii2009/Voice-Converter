@@ -2,7 +2,6 @@ let speech = new SpeechSynthesisUtterance()
 
 let voices = []
 let voiceSelect = document.querySelector('select')
-
 window.speechSynthesis.onvoiceschanged = () => {
   voices = window.speechSynthesis.getVoices()
   speech.voice = voices[0]
@@ -11,19 +10,6 @@ window.speechSynthesis.onvoiceschanged = () => {
     (voice, i) => (voiceSelect.options[i] = new Option(voice.name, i))
   )
 }
-
-// Зберігаємо введений текст у локальному сховищі
-button.addEventListener('click', () => {
-  localStorage.setItem('savedText', textarea.value)
-})
-
-// Відновлюємо введений текст при завантаженні сторінки
-window.addEventListener('load', () => {
-  const savedText = localStorage.getItem('savedText')
-  if (savedText) {
-    textarea.value = savedText
-  }
-})
 
 voiceSelect.addEventListener('change', () => {
   speech.voice = voices[voiceSelect.value]
