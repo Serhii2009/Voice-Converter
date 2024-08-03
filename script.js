@@ -1,50 +1,35 @@
 let speech = new SpeechSynthesisUtterance()
+
 let voices = []
 let voiceSelect = document.querySelector('select')
-let textArea = document.querySelector('textarea')
-let button = document.querySelector('button')
-
-// Зберегти дані в Local Storage
-function saveData() {
-  localStorage.setItem('text', textArea.value)
-  localStorage.setItem('voiceIndex', voiceSelect.value)
-}
-
-// Завантажити дані з Local Storage
-function loadData() {
-  const savedText = localStorage.getItem('text')
-  const savedVoiceIndex = localStorage.getItem('voiceIndex')
-
-  if (savedText) {
-    textArea.value = savedText
-  }
-
-  if (savedVoiceIndex) {
-    voiceSelect.value = savedVoiceIndex
-    speech.voice = voices[savedVoiceIndex]
-  }
-}
 
 window.speechSynthesis.onvoiceschanged = () => {
   voices = window.speechSynthesis.getVoices()
+  speech.voice = voices[0]
 
-  voices.forEach((voice, i) => {
-    let option = new Option(voice.name, i)
-    voiceSelect.options[i] = option
-  })
-
-  loadData() // Завантаження даних після заповнення списку голосів
+  voices.forEach(
+    (voice, i) => (voiceSelect.options[i] = new Option(voice.name, i))
+  )
 }
+
+// Зберігаємо введений текст у локальному сховищі
+button.addEventListener('click', () => {
+  localStorage.setItem('savedText', textarea.value)
+})
+
+// Відновлюємо введений текст при завантаженні сторінки
+window.addEventListener('load', () => {
+  const savedText = localStorage.getItem('savedText')
+  if (savedText) {
+    textarea.value = savedText
+  }
+})
 
 voiceSelect.addEventListener('change', () => {
   speech.voice = voices[voiceSelect.value]
-  saveData() // Зберегти дані при зміні вибраного голосу
 })
 
-button.addEventListener('click', () => {
-  speech.text = textArea.value
+document.querySelector('button').addEventListener('click', () => {
+  speech.text = document.querySelector('textarea').value
   window.speechSynthesis.speak(speech)
-  saveData() // Зберегти дані при натисканні кнопки
 })
-
-loadData() // Завантажити дані при завантаженні сторінки
